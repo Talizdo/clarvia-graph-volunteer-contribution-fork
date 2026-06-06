@@ -2,7 +2,17 @@
 
 **Open consequence graph for source-backed administrative workflows**
 
+[![CI](https://github.com/clarvia-org/clarvia-graph/actions/workflows/ci.yml/badge.svg)](https://github.com/clarvia-org/clarvia-graph/actions/workflows/ci.yml)
+[![License: EUPL-1.2](https://img.shields.io/badge/Code-EUPL--1.2-blue.svg)](LICENSE)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13112/badge)](https://www.bestpractices.dev/projects/13112)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/13112/badge)](https://www.bestpractices.dev/projects/13112)
+[![License: CC-BY-4.0](https://img.shields.io/badge/Data-CC--BY--4.0-green.svg)](LICENSE-DATA)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20572455-blue)](https://doi.org/10.5281/zenodo.20572455)
+[![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8F%20%20%E2%97%8F-green)](https://fair-software.eu)
+
 [![Try the alpha checklist](https://img.shields.io/badge/🧪_Try_the_alpha_checklist-clarvia.org-blue?style=for-the-badge)](https://clarvia.org/en/checklist)
+
+> **Status:** CI passing · [OpenSSF Best Practices: passing](https://bestpractices.coreinfrastructure.org/projects/13112) · Code: EUPL-1.2 · Data: CC-BY-4.0 · [DOI: 10.5281/zenodo.20572455](https://doi.org/10.5281/zenodo.20572455) · [FAIR: 4/5](https://fair-software.eu)
 
 Clarvia Graph is the technical engine behind [Clarvia](https://clarvia.org). It stores all the official rules and steps for bereavement paperwork across Europe — structured so that apps, websites, and public services can use them automatically. For the simple, family-friendly version, see [clarvia.org](https://clarvia.org).
 
@@ -29,9 +39,34 @@ This repository contains:
 - **Validation** — CLI tooling to validate, build, and test the graph
 - **Exports** — Generated JSON for web consumers ([example](exports/example-bereavement-lu.json)), plus JSON-LD, CPSV-AP, and web runtime bundles
 
+## Repository structure
+
+```
+clarvia-graph/
+├── schemas/          # JSON Schema definitions (v0.1)
+├── vocab/            # Controlled vocabularies
+├── graph/            # Consequence graph data (YAML)
+│   ├── authorities/
+│   ├── conditions/
+│   ├── consequences/
+│   ├── task_templates/
+│   └── …
+├── sources/          # Source registry, snapshots, and assertions
+├── translations/     # Locale overlay files
+├── tests/            # Scenario tests and unit tests
+├── exports/          # Generated output (JSON, JSON-LD, web bundles)
+├── packages/         # Workspace packages
+│   ├── cli/          #   @clarvia/cli — validation, build, and export tooling
+│   └── generator/    #   @clarvia/generator — checklist generation engine
+├── docs/             # Foundation specification and guides
+└── build/            # Build output (git-ignored)
+```
+
+The root `package.json` is a [pnpm workspace](https://pnpm.io/workspaces) that orchestrates the packages above. Run `pnpm install` from the root to set up all dependencies.
+
 ## Status
 
-🔒 **Foundation specification locked** — The [foundation spec](https://github.com/clarvia-org/clarvia-graph/wiki) defines the complete data architecture, standards alignment, editorial governance, and extensibility model.
+🔒 **Foundation specification locked** — The [foundation spec](docs/FOUNDATION.md) defines the complete data architecture, standards alignment, editorial governance, and extensibility model.
 
 🚧 **Early implementation in progress** — Proof-of-concept, alpha, and beta work is proceeding with internal resources to validate the foundation before funded hardening, validation, and scale-up phases.
 
@@ -49,8 +84,9 @@ The intended path is to build quickly, learn from real implementation, and then 
 
 ## Architecture
 
-```
-source → snapshot → assertion → consequence → task_template → checklist_item
+```mermaid
+flowchart LR
+    Source --> Snapshot --> Assertion --> Consequence --> Task["Task template"] --> Item["Checklist item"]
 ```
 
 Every checklist item traces back to an official source. No legal consequence publishes without an approved source assertion.
@@ -71,7 +107,7 @@ Clarvia maintains internal Clarvia-native schemas and generates compatibility vi
 - **ELI** — European Legislation Identifier
 - **PROV-O** — W3C Provenance Ontology
 
-> **Future export dependencies:** The PROV-O export pipeline considers using the excellent [`prov`](https://github.com/trungdong/prov) Python library.
+> **Planned for next release:** integrate [`prov`](https://github.com/trungdong/prov) Python library for PROV-O exports.
 
 ## Scope
 
@@ -92,5 +128,10 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get involved.
 
 ## Related repositories
 
-- [workflow-web](https://github.com/clarvia-org/workflow-web) — Consumer web application
-- [workflow-data](https://github.com/clarvia-org/workflow-data) — Legacy checklist data (migration source)
+- [workflow-web](https://github.com/clarvia-org/workflow-web) — Consumer web application at [clarvia.org](https://clarvia.org)
+- [workflow-data](https://github.com/clarvia-org/workflow-data) — Archived. Cross-border source, authority, and corridor data migrated into this graph in June 2026.
+
+## Acknowledgements
+
+[HirenGajjar](https://github.com/HirenGajjar) built the original cross-border bereavement dataset in `workflow-data` — source records, institution registries, and corridor documentation for Belgium, France, Germany, and Portugal. That work materially accelerated the graph's cross-border coverage and now lives here as migrated authority, source, and condition records.
+
